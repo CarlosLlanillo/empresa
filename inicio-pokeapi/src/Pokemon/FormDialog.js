@@ -33,7 +33,7 @@ const RenderMoves = (props) => {
         </TableHead>
         {props.moves.map((move, i) => (
           <TableRow disablePadding key={i}>
-            <TableCell>{move.move.name}</TableCell>
+            <TableCell>{move}</TableCell>
           </TableRow>
         ))}
       </Table>
@@ -51,12 +51,12 @@ const FormPokemon = (props) => {
         name: props.poke.name,
         height: p.height,
         weight: p.weight,
-        types: p.types,
+        types: p.types.map((t) => t.type.name),
         stats: p.stats.map((s) => ({
           base_stat: s.base_stat,
           name: s.stat.name,
         })),
-        moves: p.moves.slice(0, 5),
+        moves: p.moves.slice(0, 5).map((m) => m.move.name),
         sprites: p.sprites,
       });
       console.log(formik.values);
@@ -91,7 +91,7 @@ const FormPokemon = (props) => {
           .required("Son obligatorios")
           .integer()
           .positive("Debe ser mayor que 0")
-          .max(100, "Un maximo de 100"),
+          .max(120, "Un maximo de 100"),
         name: yup.string(),
       })
     ),
@@ -181,10 +181,10 @@ const FormPokemon = (props) => {
               {formik.values.types.map((t, i) => (
                 <Grid item xs={5}>
                   <Select
-                    name={`types[${i}].type.name`}
+                    name={`types[${i}]`}
                     type="text"
                     variant="standard"
-                    value={t.type.name}
+                    value={t}
                     onChange={formik.handleChange}
                   >
                     {tipos.map((t, i) => (
