@@ -52,17 +52,20 @@ const FormPokemon = (props) => {
         height: p.height,
         weight: p.weight,
         types: p.types,
-        stats: p.stats,
+        stats: p.stats.map((s) => ({
+          base_stat: s.base_stat,
+          name: s.stat.name,
+        })),
         moves: p.moves.slice(0, 5),
         sprites: p.sprites,
       });
+      console.log(formik.values);
       props.setOpen(true);
     });
   };
 
   const obtenerTipos = async () => {
     await pokeTypes().then((t) => {
-      console.log(t);
       setTipos(t);
     });
   };
@@ -73,8 +76,25 @@ const FormPokemon = (props) => {
   }, []);
 
   const validationSchema = yup.object().shape({
-    height: yup.number().required(),
-    types: yup.array().of(yup.string().required()),
+    height: yup
+      .number(0, "Tiene que ser numerico")
+      .positive("Debe ser mayor de 0")
+      .required("Este campo es obligatorio"),
+    weight: yup
+      .number("Tiene que ser numerico")
+      .positive("Debe ser mayor de 0")
+      .required("Este campo es obligatorio"),
+    stats: yup.array(
+      yup.object().shape({
+        base_stat: yup
+          .number()
+          .required("Son obligatorios")
+          .integer()
+          .positive("Debe ser mayor que 0")
+          .max(100, "Un maximo de 100"),
+        name: yup.string(),
+      })
+    ),
   });
 
   const formik = useFormik({
@@ -88,7 +108,7 @@ const FormPokemon = (props) => {
       sprites: {},
     },
     validationSchema: validationSchema,
-    onSubmit: (values, actions) => {
+    onSubmit: (values) => {
       console.log(values);
     },
   });
@@ -112,23 +132,27 @@ const FormPokemon = (props) => {
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField
+                  name="height"
                   label="Altura"
                   type="number"
                   variant="standard"
                   value={formik.values.height}
                   onChange={formik.handleChange}
                   error={formik.touched.height && Boolean(formik.errors.height)}
+                  helperText={formik.touched.height && formik.errors.height}
                   InputProps={sizeInputProps}
                 />
               </Grid>
               <Grid item xs={6}>
                 <TextField
+                  name="weight"
                   label="Peso"
                   type="number"
                   variant="standard"
                   value={formik.values.weight}
                   onChange={formik.handleChange}
                   error={formik.touched.weight && Boolean(formik.errors.weight)}
+                  helperText={formik.touched.weight && formik.errors.weight}
                   InputProps={sizeInputProps}
                 />
               </Grid>
@@ -138,15 +162,15 @@ const FormPokemon = (props) => {
               {formik.values.stats.map((s, i) => (
                 <Grid item xs={4}>
                   <TextField
+                    id={s.name}
+                    name={`stats[${i}].base_stat`}
                     type="number"
                     variant="standard"
-                    label={capitalize(s.stat.name)}
+                    label={capitalize(s.name)}
                     value={s.base_stat}
                     onChange={formik.handleChange}
-                    /*error={
-                        formik.touched.types[i].type.name &&
-                        Boolean(formik.errors.types[i].type.name)
-                      }*/
+                    error={formik.touched.stats && Boolean(formik.errors.stats)}
+                    //helperText={formik.touched.stats && formik.errors.stats}
                   />
                 </Grid>
               ))}
@@ -157,16 +181,11 @@ const FormPokemon = (props) => {
               {formik.values.types.map((t, i) => (
                 <Grid item xs={5}>
                   <Select
-                    id=""
                     name={`types[${i}].type.name`}
                     type="text"
                     variant="standard"
                     value={t.type.name}
                     onChange={formik.handleChange}
-                    error={
-                      formik.touched.types[i].type.name &&
-                      Boolean(formik.errors.types)
-                    }
                   >
                     {tipos.map((t, i) => (
                       <MenuItem value={t.name} key={i}>
