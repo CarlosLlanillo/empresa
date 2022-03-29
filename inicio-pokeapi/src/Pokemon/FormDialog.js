@@ -10,6 +10,7 @@ import {
   MenuItem,
   Select,
   Table,
+  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -31,11 +32,13 @@ const RenderMoves = (props) => {
             <TableCell>Movimientos:</TableCell>
           </TableRow>
         </TableHead>
-        {props.moves.map((move, i) => (
-          <TableRow disablePadding key={i}>
-            <TableCell>{move}</TableCell>
-          </TableRow>
-        ))}
+        <TableBody>
+          {props.moves.map((move, i) => (
+            <TableRow key={i}>
+              <TableCell>{move}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
       </Table>
     </TableContainer>
   );
@@ -43,7 +46,6 @@ const RenderMoves = (props) => {
 
 const FormPokemon = (props) => {
   const handleClose = () => props.setOpen(false);
-  const [tipos, setTipos] = useState([]);
 
   const obtenerPoke = async () => {
     await pokeInfo(props.poke.url).then((p) => {
@@ -59,11 +61,11 @@ const FormPokemon = (props) => {
         moves: p.moves.slice(0, 5).map((m) => m.move.name),
         sprites: p.sprites,
       });
-      console.log(formik.values);
       props.setOpen(true);
     });
   };
 
+  const [tipos, setTipos] = useState([]);
   const obtenerTipos = async () => {
     await pokeTypes().then((t) => {
       setTipos(t);
@@ -77,22 +79,22 @@ const FormPokemon = (props) => {
 
   const validationSchema = yup.object().shape({
     height: yup
-      .number(0, "Tiene que ser numerico")
+      .number("Tiene que ser numerico")
       .positive("Debe ser mayor de 0")
-      .required("Este campo es obligatorio"),
+      .required("Este campo es obligatorio")
+      .typeError("Debe ser numerico"),
     weight: yup
       .number("Tiene que ser numerico")
       .positive("Debe ser mayor de 0")
-      .required("Este campo es obligatorio"),
-    stats: yup.array(
+      .required("Este campo es obligatorio")
+      .typeError("Debe ser numerico"),
+    stats: yup.array().of(
       yup.object().shape({
         base_stat: yup
           .number()
           .required("Son obligatorios")
           .integer()
-          .positive("Debe ser mayor que 0")
-          .max(120, "Un maximo de 100"),
-        name: yup.string(),
+          .positive("Debe ser mayor que 0"),
       })
     ),
   });
@@ -110,6 +112,7 @@ const FormPokemon = (props) => {
     validationSchema: validationSchema,
     onSubmit: (values) => {
       console.log(values);
+      handleClose();
     },
   });
 
@@ -125,6 +128,7 @@ const FormPokemon = (props) => {
             <img
               src={`${formik.values.sprites.front_default}`}
               alt={props.poke.name}
+              style={{ right: 0, top: 0, position: "absolute" }}
             />
             {capitalize(formik.values.name)}
           </DialogTitle>
@@ -159,30 +163,43 @@ const FormPokemon = (props) => {
               <Grid item xs={12}>
                 <label>Estadisticas: </label>
               </Grid>
-              {formik.values.stats.map((s, i) => (
-                <Grid item xs={4}>
-                  <TextField
-                    id={s.name}
-                    name={`stats[${i}].base_stat`}
-                    type="number"
-                    variant="standard"
-                    label={capitalize(s.name)}
-                    value={s.base_stat}
-                    onChange={formik.handleChange}
-                    error={formik.touched.stats && Boolean(formik.errors.stats)}
-                    //helperText={formik.touched.stats && formik.errors.stats}
-                  />
-                </Grid>
-              ))}
+              {formik.values.stats.map((s, i) => {
+                return (
+                  <Grid key={i} item xs={4}>
+                    <TextField
+                      name={`stats[${i}].base_stat`}
+                      type="number"
+                      variant="standard"
+                      label={capitalize(s.name)}
+                      value={s.base_stat}
+                      onChange={formik.handleChange}
+                      error={
+                        formik.touched.stats &&
+                        formik.errors.stats &&
+                        Boolean(
+                          formik.errors.stats.find((x, index) => index === i)
+                        )
+                      }
+                      helperText={
+                        formik.touched.stats &&
+                        formik.errors.stats &&
+                        formik.errors.stats.find((x, index) => index === i)
+                          ? formik.errors.stats.find((x, index) => index === i)
+                              .base_stat
+                          : ""
+                      }
+                    />
+                  </Grid>
+                );
+              })}
 
               <Grid item xs={12}>
                 <label>Tipos: </label>
               </Grid>
               {formik.values.types.map((t, i) => (
-                <Grid item xs={5}>
+                <Grid key={i} item xs={5}>
                   <Select
                     name={`types[${i}]`}
-                    type="text"
                     variant="standard"
                     value={t}
                     onChange={formik.handleChange}
@@ -202,9 +219,7 @@ const FormPokemon = (props) => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button type="submit" onClick={formik.handleSubmit}>
-              Aceptar
-            </Button>
+            <Button type="submit">Aceptar</Button>
             <Button onClick={handleClose}>Cerrar</Button>
           </DialogActions>
         </form>

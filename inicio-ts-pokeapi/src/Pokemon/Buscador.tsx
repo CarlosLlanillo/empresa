@@ -11,14 +11,14 @@ import {
   TextField,
   Toolbar,
   Typography,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
+} from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
+import SearchIcon from "@material-ui/icons/Search";
 import * as yup from "yup";
 
 const validationSchema = yup.object().shape({
   filtro: yup
-    .string("Introduce el nombre de un pokemon")
+    .string()
     .required("Necesita un nombre para comenzar la busqueda"),
 });
 const Search = styled("div")(({ theme }) => ({
@@ -62,11 +62,11 @@ const StyledInputBase = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const BuscadorPokemon = (props) => {
+const BuscadorPokemon = (props: any) => {
   const formik = useFormik({
     initialValues: { filtro: props.filtro },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: (values: any) => {
       props.setFiltro(values.filtro);
       props.setBuscar(true);
       setShowSearch(false);
@@ -74,7 +74,7 @@ const BuscadorPokemon = (props) => {
   });
   const [showSearch, setShowSearch] = useState(false);
 
-  const enterPress = (key) => {
+  const enterPress = (key:any) => {
     if (key.key === "Enter") formik.handleSubmit();
   };
 
@@ -84,7 +84,7 @@ const BuscadorPokemon = (props) => {
         {!showSearch ? (
           <IconButton
             onClick={() => setShowSearch(true)}
-            size="large"
+            size="medium"
             edge="start"
             color="inherit"
             aria-label="open drawer"
@@ -93,7 +93,7 @@ const BuscadorPokemon = (props) => {
             <SearchIcon />
           </IconButton>
         ) : (
-          <Search onKeyDown={(key) => enterPress(key)}>
+          <Search onKeyDown={(key:any) => enterPress(key)}>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>

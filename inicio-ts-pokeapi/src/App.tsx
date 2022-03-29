@@ -1,8 +1,8 @@
+import React, { useEffect, useState } from "react";
 import "./App.css";
-import BuscadorPokemon from "./Pokemon/Buscador";
-import TablaPokemon from "./Pokemon/Tabla";
-import { useEffect, useState } from "react";
 import { pokeSearchAdvanced } from "./Pokemon/PokemonService";
+import BuscadorPokemon from "./Pokemon/Buscador";
+import MUIDataTable from "mui-datatables";
 
 function App() {
   const [filtro, setFiltro] = useState("b");
@@ -23,7 +23,7 @@ function App() {
         setFiltro={setFiltro}
         setBuscar={setBuscar}
       />
-      <TablaPokemon filtro={filtro} buscar={buscar} setBuscar={setBuscar} />
+      {pokes && <MUIDataTable columns={[]} data={[]} title={undefined} />}
     </div>
   );
 }
