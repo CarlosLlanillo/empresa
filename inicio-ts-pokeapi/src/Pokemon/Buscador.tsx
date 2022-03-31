@@ -4,13 +4,9 @@ import {
   alpha,
   AppBar,
   IconButton,
-  InputBase,
   styled,
-  Tab,
-  Tabs,
   TextField,
   Toolbar,
-  Typography,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
@@ -72,8 +68,8 @@ const BuscadorPokemon = (props: any) => {
       setShowSearch(false);
     },
   });
-  const [showSearch, setShowSearch] = useState(false);
 
+  const [showSearch, setShowSearch] = useState(false);
   const enterPress = (key:any) => {
     if (key.key === "Enter") formik.handleSubmit();
   };
@@ -88,7 +84,7 @@ const BuscadorPokemon = (props: any) => {
             edge="start"
             color="inherit"
             aria-label="open drawer"
-            sx={{ mr: 2 }}
+            style={{ marginRight: 2 }}
           >
             <SearchIcon />
           </IconButton>
@@ -109,25 +105,6 @@ const BuscadorPokemon = (props: any) => {
           </Search>
         )}
       </Toolbar>
-      {/*<Tabs variant="fullWidth" value={0}>
-      {showSearch ? (
-        <form onSubmit={formik.handleSubmit}  style={{ width: "100%" }}>
-          <Tab label="Buscar" type="submit"  />
-          <TextField
-            id="filtro"
-            name="filtro"
-            variant="standard"
-            style={{ top: 3, width: "100%" }}
-            value={formik.values.filtro}
-            onChange={formik.handleChange}
-            error={formik.touched.filtro && Boolean(formik.errors.filtro)}
-            helperText={formik.touched.filtro && formik.errors.filtro}
-          />
-        </form>
-      ) : (
-        <Tab label="Mostrar Buscador" onClick={() => setShowSearch(true)} />
-      )}
-      </Tabs>*/}
     </AppBar>
   );
 };

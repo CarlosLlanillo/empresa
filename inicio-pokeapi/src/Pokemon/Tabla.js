@@ -9,7 +9,6 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-//import { DataGrid } from "@mui/x-data-grid";
 import { pokeSearch } from "./PokemonService";
 import React, { useEffect, useState } from "react";
 import FormDialog from "./FormDialog";
@@ -18,6 +17,10 @@ const columns = [
   { id: "name", label: "Nombre" },
   { id: "url", label: "URL" },
 ];
+/*const dataCol = [
+  { field: "name", headerName: "Name", width: 200 },
+  { field: "url", headerName: "Url", width: "auto" },
+];*/
 
 const TablaPokemon = (props) => {
   //Actualizado del pokemon buscado
@@ -28,6 +31,7 @@ const TablaPokemon = (props) => {
     props.setBuscar(false);
   }, [props]);
   const [pokemons, setPokemons] = useState([]);
+
   //Pokemon seleccionado
   const [selectedPoke, setSelectedPoke] = useState(null);
 
@@ -43,38 +47,23 @@ const TablaPokemon = (props) => {
     setRowsPerPage(+e.target.value);
     setPage(0);
   };
+
   //Manejo del formdialog de los pokemons
   const [open, setOpen] = useState(false);
   const hadleClickRow = (poke) => {
     setSelectedPoke(poke);
     setOpen(true);
   };
-  /*const dataCol = [
-    { field: "name", headerName: "Name", width: 200 },
-    { field: "url", headerName: "Url", width: "auto" },
-  ];*/
 
+  //Eliminar un pokemon
   const removePoke = (poke) => {
     let p = pokemons.filter((p) => p.name !== poke.name);
     setPokemons(p);
   };
+
   return (
-    <Paper
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      {/*pokemons.length > 0 && (
-        <DataGrid
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          columns={dataCol}
-          rows={pokemons}
-          style={{ height: 300 }}
-        />
-      )*/}
-      <div style={{ width: "60%" }}>
+    <Paper>
+      <div>
         <TableContainer>
           <Table stickyHeader size="small">
             <TableHead>

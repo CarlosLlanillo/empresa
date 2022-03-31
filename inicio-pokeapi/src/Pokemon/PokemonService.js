@@ -14,15 +14,14 @@ const pokeSearch = async (nombre) => {
 const pokeSearchAdvanced = async (nombre) => {
   return await loadJson("https://pokeapi.co/api/v2/pokemon?limit=10000").then(
     (p) =>
-      p.results
-        .filter((p) => p.name.includes(nombre))
-        .map((p) => {
-          return {
-            name: p.name,
-            url: p.url,
-            info: loadJson(p.url),
-          };
-        })
+      Promise.all(
+        p.results
+          .filter((p) => p.name.includes(nombre))
+          .map(async (p) => {
+            let info = await loadJson(p.url);
+            return { name: p.name, url: p.url, info: info };
+          })
+      )
   );
 };
 

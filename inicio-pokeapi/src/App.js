@@ -13,7 +13,8 @@ function App() {
     if (!buscar) return;
 
     pokeSearchAdvanced(filtro).then((p) => setPokes(p));
-  }, [filtro, buscar]);
+    console.log(pokes);
+  }, [pokes, filtro, buscar]);
 
   return (
     <div className="App">

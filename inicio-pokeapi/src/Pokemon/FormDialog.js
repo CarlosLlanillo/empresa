@@ -79,12 +79,12 @@ const FormPokemon = (props) => {
 
   const validationSchema = yup.object().shape({
     height: yup
-      .number("Tiene que ser numerico")
+      .number()
       .positive("Debe ser mayor de 0")
       .required("Este campo es obligatorio")
       .typeError("Debe ser numerico"),
     weight: yup
-      .number("Tiene que ser numerico")
+      .number()
       .positive("Debe ser mayor de 0")
       .required("Este campo es obligatorio")
       .typeError("Debe ser numerico"),
@@ -94,7 +94,8 @@ const FormPokemon = (props) => {
           .number()
           .required("Son obligatorios")
           .integer()
-          .positive("Debe ser mayor que 0"),
+          .positive("Debe ser mayor que 0")
+          .typeError("Debe ser numerico"),
       })
     ),
   });
@@ -138,7 +139,7 @@ const FormPokemon = (props) => {
                 <TextField
                   name="height"
                   label="Altura"
-                  type="number"
+                  type="text"
                   variant="standard"
                   value={formik.values.height}
                   onChange={formik.handleChange}
@@ -151,7 +152,7 @@ const FormPokemon = (props) => {
                 <TextField
                   name="weight"
                   label="Peso"
-                  type="number"
+                  type="text"
                   variant="standard"
                   value={formik.values.weight}
                   onChange={formik.handleChange}
@@ -168,7 +169,6 @@ const FormPokemon = (props) => {
                   <Grid key={i} item xs={4}>
                     <TextField
                       name={`stats[${i}].base_stat`}
-                      type="number"
                       variant="standard"
                       label={capitalize(s.name)}
                       value={s.base_stat}

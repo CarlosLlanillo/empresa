@@ -1,43 +1,60 @@
-const params = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-};
+import { capitalize } from "@material-ui/core";
 
-const pokeSearch = async (nombre: string) => {
-  return await fetch("https://pokeapi.co/api/v2/pokemon?limit=10000", params)
-    .then((res) => res.json())
-    .then((pokes) => pokes.results.filter((p: any) => p.name.includes(nombre)));
-  //.then((pokes) => pokes.map((p, i) => ({ id: i + 1, name: p.name, url: p.url })));
-};
-
-const pokeSearchAdvanced = async (nombre: string) => {
-  return await loadJson("https://pokeapi.co/api/v2/pokemon?limit=10000").then(
-    (p) =>
-      p.results
-        .filter((p: any) => p.name.includes(nombre))
-        .map((p: any) => {
-          return {
-            name: p.name,
-            url: p.url,
-            info: loadJson(p.url),
-          };
-        })
+const filtrarNombre = async (nombre: string) => {
+  return await loadJson(`https://pokeapi.co/api/v2/pokemon?limit=10000`).then(
+    (p) => p.results.filter((p: any) => p.name.includes(nombre))
   );
 };
 
-const pokeInfo = async (url: string) => {
-  return await fetch(url, params).then((res) => res.json());
+const pokePage = async (page: number, rows: number) => {
+  return await loadJson(
+    `https://pokeapi.co/api/v2/pokemon?offset=${page * rows}&limit=${rows}`
+  );
 };
 
-const pokeTypes = async () => {
-  return await fetch("https://pokeapi.co/api/v2/type/", params)
-    .then((res) => res.json())
-    .then((t) => t.results.map((t: any) => t));
+const pokeInfo = async (page: number, rows: number) => {
+  let pP = await pokePage(page, rows);
+  // console.log(pP);
+  let pI = await Promise.all(
+    pP.results.map(async (p: any) => {
+      let info = await loadJson(p.url);
+      return {
+        name: capitalize(p.name),
+        weight: info.weight,
+        height: info.height,
+        img: info.sprites.front_default,
+        types: info.types,
+      };
+    })
+  );
+
+  return {
+    search: false,
+    count: pP.count,
+    pokes: pI,
+  };
+};
+
+const pokeSearch = async (nombre: string) => {
+  let p = await filtrarNombre(nombre).then((p) =>
+    Promise.all(
+      p.map(async (p: any) => {
+        let info = await loadJson(p.url);
+        return {
+          name: capitalize(p.name),
+          weight: info.weight,
+          height: info.height,
+          img: info.sprites.front_default,
+          types: info.types,
+        };
+      })
+    )
+  );
+  return { search: true, count: p.length, pokes: p };
 };
 
 const loadJson = async (url: string) => {
   return await fetch(url).then((res) => res.json());
 };
 
-export { pokeSearch, pokeSearchAdvanced, pokeInfo, pokeTypes };
+export { pokeSearch, pokeInfo };
