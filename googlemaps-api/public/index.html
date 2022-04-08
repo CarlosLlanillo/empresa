@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="EMI Suite" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>EMI app</title>
+    <script>
+      const getCookie = (name) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+      };
+
+      const getTokenInfo = (token) => {
+        if (!token) {
+          return {};
+        }
+        const tokenParts = token.split('.');
+        const encodedPayload = tokenParts[1];
+        const rawPayload = atob(encodedPayload);
+        const parsed = JSON.parse(rawPayload);
+        return {
+          expire: parsed.exp,
+          username: parsed.sub,
+        };
+      };
+      const token = getCookie('token');
+      const { expire } = getTokenInfo(token);
+      const now = parseInt(new Date().getTime() / 1000);
+      const isExpired = !expire || expire - now < 0;
+      if (isExpired) {
+        let loginUrl = '%REACT_APP_LOGIN_URL%';
+        if (loginUrl.includes('REACT_APP')) {
+          loginUrl = '/login';
+        }
+        window.location.replace(`${loginUrl}?redirect=${location.origin}`);
+      }
+    </script>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>

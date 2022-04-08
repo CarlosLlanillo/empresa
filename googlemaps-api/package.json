@@ -1,0 +1,70 @@
+{
+  "name": "googlemaps-api",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@googlemaps/markerclustererplus": "^1.2.10",
+    "@googlemaps/react-wrapper": "^1.1.30",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
+    "@material-ui/lab": "^4.0.0-alpha.61",
+    "@react-google-maps/api": "^2.8.1",
+    "@snc/api": "^3.0.4",
+    "@snc/app-bar": "^3.0.9",
+    "@snc/emi-config": "^1.0.17",
+    "@snc/ui": "^2.0.21",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^11.2.7",
+    "@testing-library/user-event": "^12.8.3",
+    "formik": "^2.2.9",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
+    "node-sass": "^4.14.1",
+    "prettier": "^2.6.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-error-boundary": "^3.1.4",
+    "react-localization": "^1.0.18",
+    "react-query": "^3.34.19",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "^4.0.3",
+    "typescript": "^4.6.3",
+    "web-vitals": "^0.2.4",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "build:ci": "CI=false PUBLIC_URL=/admin yarn build",
+    "format": "yarn run prettier -c \"**/*.{js,json,scss,md}\"",
+    "format:fix": "yarn run prettier --write \"**/*.{js,json,scss,md}\"",
+    "format:fix:staged": "yarn run prettier --write",
+    "lint": "yarn run eslint .",
+    "lint:staged": "yarn run eslint",
+    "war": "yarn createWar ./build ./admin.war",
+    "deploy:emi": "export $(cat .env | xargs) && curl -v -u $TOMCAT_USER_SOINCON_DEVELOP:$TOMCAT_PASSWORD_SOINCON_DEVELOP -T ./admin.war 'https://emi.soincon.es/manager/text/deploy?path=/admin&update=true'"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@snc/api-generator": "^1.0.6",
+    "@snc/eslint-config": "^1.0.25",
+    "@snc/utils": "^1.0.52",
+    "@types/react-router-dom": "^5.3.3"
+  }
+}

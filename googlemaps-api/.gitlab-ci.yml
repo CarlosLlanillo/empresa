@@ -1,0 +1,22 @@
+image: node:12
+stages:
+  - deploy
+
+#Caches this after each job
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules
+    - .yarn
+
+Deploy EMI:
+  stage: deploy
+  only:
+    refs:
+      - develop
+      - master
+  script:
+    - yarn install --frozen-lockfile --prefer-offline --network-timeout 1000000
+    - yarn build:ci
+    - yarn war
+    - yarn deploy:emi
